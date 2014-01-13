@@ -5,6 +5,7 @@ progress.  Rather than just modifying Wrye Bash's code to run on Python 3,
 this is a complete rewrite from the ground up.
 
 Requirements:
+
 1) Python 3.3.x (32-bit or 64-bit version)
 
      http://www.python.org/download/releases/3.3.3/
@@ -22,6 +23,7 @@ Requirements:
      https://sourceforge.net/projects/pywin32/files/pywin32/
 
 Also recommended:
+
 1) Python Launcher for Windows is installed by default with Python 3.3, so
    you can continue to maintain a Python 2.x install on your computer.  Just
    make sure to add shebang lines as necessary so your programs use the correct
