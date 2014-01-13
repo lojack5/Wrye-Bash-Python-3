@@ -36,7 +36,7 @@ import sys
 import traceback
 import subprocess
 
-from .bolt.Path import GPath
+from .Path import GPath
 
 
 #--Setup locale
@@ -108,7 +108,7 @@ def Install(language=None, pathRead=None, pathWrite=None):
             # See if translation needs to be recompiled
             txtMtime = txt.mtime
             if not mo.exists or txtMtime != mo.mtime:
-                txt.copyTo(po)
+                txt.copy(po)
                 args= ['m', po.s, '-o', mo.s]
                 if hasattr(sys, 'frozen'):
                     # Same thing as for 'Dump' for frozen

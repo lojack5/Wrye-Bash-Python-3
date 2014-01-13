@@ -132,11 +132,11 @@ def main():
         #--Parse command line
         barg.parse()
         #--Initialize directories
-        import src.dirs
-        src.dirs.InitDirs()
+        from . import dirs
+        dirs.InitDirs()
         #--Setup translations
         try:
-            from src.bolt import Translations
+            from .bolt import Translations
             Translations.Install(pathRead=bass.dirs['l10n'],
                                  pathWrite=bass.dirs['l10n.compiled'])
         except Exception as e:
