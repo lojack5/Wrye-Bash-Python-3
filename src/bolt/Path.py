@@ -392,9 +392,12 @@ class Path(object):
         """Calculates CRC for self."""
         size = os.path.getsize(self._s)
         crc = 0
+        crc32 = binascii.crc32
         with open(self._s, 'rb') as ins:
-            while ins.tell() < size:
-                crc = binascii.crc32(ins.read(2097152), crc) # 2MB at a time
+            insTell = ins.tell
+            insRead = ins.read
+            while insTell() < size:
+                crc = crc32(insRead(2097152), crc) # 2MB at a time
         return crc & 0xFFFFFFFF
 
     @property
@@ -429,11 +432,14 @@ class Path(object):
            bytes have been read in."""
         size = os.path.getsize(self._s)
         crc = 0
+        crc32 = binascii.crc32
         with open(self._s, 'rb') as ins:
+            insTell = ins.tell
+            insRead = ins.read
             pos = 0
             while pos < size:
-                crc = binascii.crc32(ins.read(2097152), crc) # 2MB at a time
-                pos = ins.tell()
+                crc = crc32(insRead(2097152), crc) # 2MB at a time
+                pos = insTell()
                 callback(pos)
         return crc & 0xFFFFFFFF
 
