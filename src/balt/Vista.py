@@ -1,26 +1,25 @@
 # -*- coding: utf-8 -*-
-# src/balt/Vista.py
 #
-# GPL License and Copyright Notice =============================================
+# GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bash.
 #
-#  Wrye Bash is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
+#  Wrye Bash is free software; you can redistribute it and/or modify it under
+#  the terms of the GNU General Public License as published by the Free
+#  Software Foundation; either version 2 of the License, or (at your option)
+#  any later version.
 #
-#  Wrye Bash is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
+#  Wrye Bash is distributed in the hope that it will be useful, but WITHOUT ANY
+#  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+#  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+#  details.
 #
-#  You should have received a copy of the GNU General Public License
-#  along with Wrye Bash; if not, write to the Free Software Foundation,
-#  Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#  You should have received a copy of the GNU General Public License along with
+#  Wrye Bash; if not, write to the Free Software Foundation, Inc.,
+#  59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
-#  Wrye Bash copyright (C) 2005, 2006, 2007, 2008, 2009 Wrye
+#  Wrye Bash copyright (C) 2005-2009 Wrye
 #
-# ==============================================================================
+# =============================================================================
 
 """This module contains UI elements specific to Windows Vista and later.
 
@@ -48,20 +47,23 @@
        MA 02110-1301, USA.
    """
 
-# Imports ----------------------------------------------------------------------
+# Imports ---------------------------------------------------------------------
 from ctypes import *
 import win32gui
 import winreg
 import subprocess
 
-# Globals ----------------------------------------------------------------------
+
+# Globals ---------------------------------------------------------------------
 Available = True
+
 
 #==SetUAC =====================================================================
 #==============================================================================
 """Sets a button to a UAC button (shield icon)"""
-def SetUAC(handle,uac=True):
-    win32gui.SendMessage(handle,0x160C,None,uac)
+def SetUAC(handle, uac=True):
+    win32gui.SendMessage(handle, 0x160C, None, uac)
+
 
 #==StartURL ===================================================================
 #==============================================================================
@@ -71,21 +73,24 @@ def StartURL(url):
     try:
         key = winreg.OpenKey(winreg.HKEY_CLASSES_ROOT,
                              'http\\shell\\open\\command')
-        value = winreg.EnumValue(key,0)
+        value = winreg.EnumValue(key, 0)
         cmd = value[1]
-        cmd = cmd.replace('%1',url)
+        cmd = cmd.replace('%1', url)
         subprocess.Popen(cmd)
     except WindowsError:
         # Regestry failed, fallback to Python standard method
         import webbrowser
-        webbrowser.open(url,new=2)
+        webbrowser.open(url, new=2)
 
-def StartURLCallback(dialog,url):
+
+def StartURLCallback(dialog, url):
     StartURL(url)
+
 
 #==TaskDialog =================================================================
 #==============================================================================
 BUTTONID_OFFSET                 = 1000
+
 
 #---Internal Flags. Leave these alone unless you know what you're doing---#
 ENABLE_HYPERLINKS               = 0x0001
@@ -105,6 +110,7 @@ RTL_LAYOUT                      = 0x2000
 NO_DEFAULT_RADIO_BUTTON         = 0x4000
 CAN_BE_MINIMIZED                = 0x8000
 
+
 #-------------Events---------------#
 CREATED                         = 0
 NAVIGATED                       = 1
@@ -118,9 +124,11 @@ VERIFICATION_CLICKED            = 8
 HELP                            = 9
 EXPANDER_BUTTON_CLICKED         = 10
 
+
 #-------Callback Type--------#
 PFTASKDIALOGCALLBACK = WINFUNCTYPE(c_void_p, c_void_p, c_uint, c_uint,
                                    c_long, c_long)
+
 
 #-------Win32 Stucts/Unions--------#
 # Callers do not have to worry about using these.
@@ -128,26 +136,29 @@ class TASKDIALOG_BUTTON(Structure):
     _fields_ = [('nButtonID', c_int),
                 ('pszButtonText', c_wchar_p)]
 
+
 class FOOTERICON(Union):
-    _fields_ = [("hFooterIcon", c_void_p),
-                ("pszFooterIcon", c_ushort)]
+    _fields_ = [('hFooterIcon', c_void_p),
+                ('pszFooterIcon', c_ushort)]
+
 
 class MAINICON(Union):
-    _fields_ = [("hMainIcon", c_void_p),
-                ("pszMainIcon", c_ushort)]
+    _fields_ = [('hMainIcon', c_void_p),
+                ('pszMainIcon', c_ushort)]
+
 
 class TASKDIALOGCONFIG(Structure):
-    _fields_ = [("cbSize", c_uint),
-                ("hwndParent", c_void_p),
-                ("hInstance", c_void_p),
-                ("dwFlags", c_uint),
-                ("dwCommonButtons", c_uint),
-                ("pszWindowTitle", c_wchar_p),
-                ("uMainIcon", MAINICON),
-                ("pszMainInstruction", c_wchar_p),
-                ("pszContent", c_wchar_p),
-                ("cButtons", c_uint),
-                ("pButtons", POINTER(TASKDIALOG_BUTTON)),
+    _fields_ = [('cbSize', c_uint),
+                ('hwndParent', c_void_p),
+                ('hInstance', c_void_p),
+                ('dwFlags', c_uint),
+                ('dwCommonButtons', c_uint),
+                ('pszWindowTitle', c_wchar_p),
+                ('uMainIcon', MAINICON),
+                ('pszMainInstruction', c_wchar_p),
+                ('pszContent', c_wchar_p),
+                ('cButtons', c_uint),
+                ('pButtons', POINTER(TASKDIALOG_BUTTON)),
                 ('nDefaultButton', c_int),
                 ('cRadioButtons', c_uint),
                 ('pRadioButtons', POINTER(TASKDIALOG_BUTTON)),
@@ -164,12 +175,14 @@ class TASKDIALOGCONFIG(Structure):
 
     _anonymous_ = ("uMainIcon", "uFooterIcon",)
 
+
 try:
     indirect = windll.comctl32.TaskDialogIndirect
     indirect.restype = c_void_p
 except AttributeError:
     global Available
     Available = False
+
 
 #------Message codes------#
 _SETISMARQUEE = 1127
@@ -180,6 +193,7 @@ _SETELEMENT = 1132
 _SETSHIELD = 1139
 _UPDATEICON = 1140
 
+
 _CONTENT = 0
 _EX_INFO = 1
 _FOOTER = 2
@@ -189,50 +203,42 @@ _HEADING = 3
 class TaskDialog(object):
     """Wrapper class for the Win32 task dialog."""
 
+    stock_icons = {'warning': 65535,
+                   'error': 65534,
+                   'information': 65533,
+                   'shield': 65532}
 
-    stock_icons = {'warning' : 65535,
-                  'error' : 65534,
-                  'information' : 65533,
-                  'shield' : 65532}
-
-    stock_buttons = {'ok' : 0x01, #1
-                    'yes' : 0x02, #2
-                    'no' : 0x04, #4
-                    'cancel' : 0x08, #8
-                    'retry' : 0x10, #16
-                    'close' : 0x20} #32
+    stock_buttons = {'ok': 0x01,
+                     'yes': 0x02,
+                     'no': 0x04,
+                     'cancel': 0x08,
+                     'retry': 0x10,
+                     'close': 0x20}
 
     stock_button_ids = {'ok': 1,
-                       'cancel': 2,
-                       'retry': 4,
-                       'yes': 6,
-                       'no': 7,
-                       'close': 8}
+                        'cancel': 2,
+                        'retry': 4,
+                        'yes': 6,
+                        'no': 7,
+                        'close': 8}
 
     def __init__(self, title, heading, content, buttons=[], icon=None,
                  parenthwnd=None):
         """Initialize the dialog."""
-
-
-
-        self.__events = {CREATED:[],
-                         NAVIGATED:[],
-                         BUTTON_CLICKED:[],
-                         HYPERLINK_CLICKED:[],
-                         TIMER:[],
-                         DESTROYED:[],
-                         RADIO_BUTTON_CLICKED:[],
-                         DIALOG_CONSTRUCTED:[],
-                         VERIFICATION_CLICKED:[],
-                         HELP:[],
-                         EXPANDER_BUTTON_CLICKED:[]}
-
+        self.__events = {CREATED: [],
+                         NAVIGATED: [],
+                         BUTTON_CLICKED: [],
+                         HYPERLINK_CLICKED: [],
+                         TIMER: [],
+                         DESTROYED: [],
+                         RADIO_BUTTON_CLICKED: [],
+                         DIALOG_CONSTRUCTED: [],
+                         VERIFICATION_CLICKED: [],
+                         HELP: [],
+                         EXPANDER_BUTTON_CLICKED: []}
         self.__stockb_indices = []
-
         self.__shield_buttons = []
-
         self.__handle = None
-
 
         self.set_title(title)
         self.set_heading(heading)
@@ -280,24 +286,18 @@ class TaskDialog(object):
         return self
 
     def set_buttons(self, buttons, convert_stock_buttons=True):
-        """
-
-           Set the buttons on the dialog using the list of strings in *buttons*
+        """Set the buttons on the dialog using the list of strings in *buttons*
            where each string is the label for a new button.
 
            See the official documentation.
-
         """
         self._buttons = buttons
         self._conv_stock = convert_stock_buttons
         return self
 
     def set_radio_buttons(self, buttons, default=0):
-        """
-
-           Add radio buttons to the dialog using the list of strings in
+        """Add radio buttons to the dialog using the list of strings in
            *buttons*.
-
         """
         self._radio_buttons = buttons
         self._default_radio = default
@@ -325,8 +325,8 @@ class TaskDialog(object):
         return self
 
     def set_expander(self, expander_data, expanded=False, at_footer=False):
-        """Set up a collapsible control that can reveal further information about
-           the task that the dialog performs."""
+        """Set up a collapsible control that can reveal further information
+           about the task that the dialog performs."""
         if len(expander_data) != 3: return self
         self._expander_data = expander_data
         self._expander_expanded = expanded
@@ -342,7 +342,7 @@ class TaskDialog(object):
     def set_progress_bar(self, callback, low=0, high=100, pos=0):
         """Set the progress bar on the task dialog as a marquee progress bar."""
         _range = (high << 16) | low
-        self._progress_bar = {'func':callback, 'range': _range, 'pos':pos}
+        self._progress_bar = {'func': callback, 'range': _range, 'pos': pos}
         return self
 
 
@@ -365,11 +365,9 @@ class TaskDialog(object):
         """Build and display the dialog box."""
         conf = self.__configure(command_links, centered, can_cancel,
                                 can_minimize, hyperlinks, additional_flags)
-
         button = c_int()
         radio = c_int()
         checkbox = c_int()
-
         indirect(byref(conf), byref(button), byref(radio), byref(checkbox))
 
         if button.value >= BUTTONID_OFFSET:
