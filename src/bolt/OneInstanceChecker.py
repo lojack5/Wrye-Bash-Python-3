@@ -67,6 +67,8 @@ def Start(lockDir=None, restarting=False, timeout=10):
         # another instance already has an open lock on it.
         if os.path.exists(pidPath):
             os.remove(pidPath)
+        if not os.path.exists(lockDir):
+            os.makedirs(lockDir)
         lockFp = os.open(pidPath, os.O_CREAT|os.O_EXCL|os.O_RDWR)
         os.write(lockFp, bytes('%d' % os.getpid(), 'utf8'))
     except OSError as e:
@@ -74,7 +76,7 @@ def Start(lockDir=None, restarting=False, timeout=10):
         # have a lock on it.
         msg = _('Only one instance of Wrye Bash may be run.')
         print(msg)
-        from . import balt
+        from .. import balt
         balt.ShowError(None, msg)
         return False
     atexit.register(_OnExit)
