@@ -42,7 +42,7 @@ def ErrorMessage(message):
     try:
         # Try wx first
         import wx
-        from src.balt import ShowError
+        from .balt import ShowError
         ShowError(None,message,'Wrye Bash - Error',parseURLs=True)
     except:
         # That failed, try Tkinter
@@ -58,7 +58,7 @@ def ErrorMessage(message):
             button = ttk.Button(text=_('Quit'), command=root.destroy)
             button.pack()#side=tkinter.BOTTOM)
             text = tkinter.Text(frame, wrap='word')
-            text.insert(1.0, msg)
+            text.insert(1.0, message)
             text.config(state=tkinter.DISABLED)
             text.pack()
             root.mainloop()
@@ -101,22 +101,26 @@ def VerifyRequirements():
         errors.append(_('pywin32 218 is required.  None detected.'
                         '  Get it from:')
                       + '\n    ' + url)
-    # The "correct" method to check pywin32 version per the author:
-    # https://mail.python.org/pipermail/python-win32/2010-April/010404.html
-    # Remember to add the distutils import to the excludes for the
-    # cx_Freeze script, as the exe version doesn't need version checks.
-    # The win32api.GetFileVersionInfo method does not work on 64-bit
-    # builds.
-    import distutils.sysconfig
-    pth = distutils.sysconfig.get_python_lib(plat_specific=1)
-    with open(os.path.join(pth, 'pywin32.version.txt')) as ins:
-        version = int(ins.read().strip())
-    if version < 218:
-        errors.append(
-            (_('pywin32 218 is required.  Current version is %(version)s.'
-               '  Get it from:')
-             % {'version': version})
-            + '\n    ' + url)
+    else:
+        # The "correct" method to check pywin32 version per the author:
+        # https://mail.python.org/pipermail/python-win32/2010-April/010404.html
+        # Remember to add the distutils import to the excludes for the
+        # cx_Freeze script, as the exe version doesn't need version checks.
+        # The win32api.GetFileVersionInfo method does not work on 64-bit
+        # builds.
+        import distutils.sysconfig
+        pth = distutils.sysconfig.get_python_lib(plat_specific=1)
+        try:
+            with open(os.path.join(pth, 'pywin32.version.txt')) as ins:
+                version = int(ins.read().strip())
+        except:
+            version = 'unknown'
+        if version < 218:
+            errors.append(
+                (_('pywin32 218 is required.  Current version is %(version)s.'
+                   '  Get it from:')
+                 % {'version': version})
+                + '\n    ' + url)
 
     if errors:
         msg = (_('Cannot start Wrye Bash!  Please ensure that Python'
