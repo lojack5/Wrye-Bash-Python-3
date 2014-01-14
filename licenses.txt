@@ -1,0 +1,7 @@
+To keep track of software from other sources and their licenses
+
+Wrye Bash: http://sourceforge.net/projects/oblivionworks/, GPLv2
+Curtains: http://curtains.sourceforge.net/, GPLv3 (original code for Vista.py)
+OnInstanceChecker: http://www.effbot.org/librarybook/msvcrt-example-3.py (link no longer works however)
+Optimize: http://code.activestate.com/recipes/576904/, MIT
+XTaskDialog: http://www.naughter.com/xtaskdialog.html, No mainstream license, only restriction is no releasing modified source code
