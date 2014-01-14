@@ -39,8 +39,11 @@ import tempfile
 import binascii
 
 #--Libraries
-import win32api
-from win32com.shell import shell, shellcon
+try:
+    import win32api
+    from win32com.shell import shell, shellcon
+except ImportError:
+    win32api = None
 
 #--Local
 from src.bolt.Optimize import make_constants, bind_all
@@ -693,9 +696,13 @@ class PathUnion(object):
 
 
 # Initialize Shell Paths ------------------------------------------------------
-def _shell_path(name):
-    folderId = getattr(shellcon, 'CSIDL_'+name)
-    return GPath(shell.SHGetFolderPath(0, folderId, None, 0))
+if win32api:
+    def _shell_path(name):
+        folderId = getattr(shellcon, 'CSIDL_'+name)
+        return GPath(shell.SHGetFolderPath(0, folderId, None, 0))
+else:
+    def _shell_path(name):
+        return GPath('.')
 
 Desktop = _shell_path('DESKTOP')
 AppData = _shell_path('APPDATA')
