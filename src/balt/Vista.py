@@ -49,27 +49,32 @@
 
 # Imports ---------------------------------------------------------------------
 from ctypes import *
-import win32gui
 import winreg
 import subprocess
-
-
-# Globals ---------------------------------------------------------------------
-Available = True
+import platform
+import os
 
 
 #==SetUAC =====================================================================
 #==============================================================================
-"""Sets a button to a UAC button (shield icon)"""
-def SetUAC(handle, uac=True):
-    win32gui.SendMessage(handle, 0x160C, None, uac)
+try:
+    import win32gui
+
+    def SetUAC(handle, uac=True):
+        """Sets a button to a UAC button (shield icon)"""
+        win32gui.SendMessage(handle, 0x160C, None, uac)
+
+except ImportError:
+    def SetUAC(handle, uac=True):
+        """Sets a button to a UAC button (shield icon)"""
+        pass
 
 
 #==StartURL ===================================================================
 #==============================================================================
-"""Opens URL in default browser.  Do it this way instead of os.startfile or
-   ShellExecute, because anchors get lost using those."""
 def StartURL(url):
+    """Opens URL in default browser.  Do it this way instead of os.startfile or
+       ShellExecute, because anchors get lost using those."""
     try:
         key = winreg.OpenKey(winreg.HKEY_CLASSES_ROOT,
                              'http\\shell\\open\\command')
@@ -148,6 +153,8 @@ class MAINICON(Union):
 
 
 class TASKDIALOGCONFIG(Structure):
+    _pack_ = 1
+    _anonymous_ = ("uMainIcon", "uFooterIcon",)
     _fields_ = [('cbSize', c_uint),
                 ('hwndParent', c_void_p),
                 ('hInstance', c_void_p),
@@ -171,16 +178,20 @@ class TASKDIALOGCONFIG(Structure):
                 ('pszFooter', c_wchar_p),
                 ('pfCallback', PFTASKDIALOGCALLBACK),
                 ('lpCallbackData', c_long),
-                ('cxWidth', c_uint)]
-
-    _anonymous_ = ("uMainIcon", "uFooterIcon",)
+                ('cxWidth', c_uint),
+                ]
 
 
 try:
-    indirect = windll.comctl32.TaskDialogIndirect
+    if '64bit' in platform.architecture():
+        name = 'XTaskDlg64.dll'
+    else:
+        name = 'XTaskDlg32.dll'
+    xtaskdlg = WinDLL(os.path.join('bin',name))
+    indirect = xtaskdlg.TaskDialogIndirect
     indirect.restype = c_void_p
+    Available = True
 except AttributeError:
-    global Available
     Available = False
 
 
