@@ -181,9 +181,17 @@ class Path(object):
         """Add two path strings together.  Does not insert path separators."""
         return GPath(self._s + getNorm(other))
 
-    def __div__(self, other):
-        """Join to paths together with path separator."""
+    def __radd__(self, other):
+        """Add two path strings together.  Does not insert path separators."""
+        return GPath(getNorm(other) + self._s)
+
+    def __truediv__(self, other):
+        """Join two paths together with path separator."""
         return GPath(os.path.join(self._s, getNorm(other)))
+
+    def __rtruediv__(self, other):
+        """Join two paths together with path separator."""
+        return GPath(os.path.join(getNorm(other), self._s))
 
     def __hash__(self):
         """Has function for use as a key for containers."""
