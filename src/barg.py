@@ -35,7 +35,7 @@ def parse():
                         dest='debug',
                         action='store_true',
                         default=False,
-                        help='enabled debug mode')
+                        help='enable debug mode')
     parser.add_argument('-p', '--portable',
                         dest='portable',
                         action='store_true',
