@@ -40,6 +40,7 @@ def _OnExit():
     except Exception as e:
         pass
 
+
 def InitDirs():
     # Initialize directories.  To make sure Bash follows symlinks and stuff
     # correctly, we'll use the 'realpath' portion of this.'
@@ -58,7 +59,7 @@ def InitDirs():
     # user - User's My Documents directory
     dirs['user'] = Path.Personal
 
-    # appdata - User's Local App Data directoyr + Wrye Bash
+    # appdata - User's Local App Data directory + Wrye Bash
     dirs['appdata'] = Path.LocalAppData.join('Wrye Bash')
 
     # temp - Wrye Bash's base directory for all temp files/folders this run
