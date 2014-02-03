@@ -20,5 +20,3 @@ Also recommended:
 * [Python Launcher for Windows](http://blog.python.org/2011/07/python-launcher-for-windows_11.html "Python Launcher for Windows")
 
   Python 3.3 installs this by default, so no need to download it again.  However, it's worth reading the linked article if you don't know how to put a shebang line into your source files.  Both the Python 2 and Python 3 versions of Wrye Bash have shebang lines, so nothing extra should be needed.
-
-   
