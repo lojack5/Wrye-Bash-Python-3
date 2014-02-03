@@ -506,7 +506,7 @@ class Path(object):
             parent = os.path.normcase(os.path.realpath(self._s))
             child = os.path.normcase(os.path.realpath(getNorm(path)))
         else:
-            # There are times when we might not want to follow symlinks
+            # ...there are times when we might not want to follow symlinks
             if os.path.isabs(self._s):
                 parent = self._cs
             else:
@@ -515,7 +515,7 @@ class Path(object):
             if os.path.isabs(path):
                 child = os.path.normcase(path)
             else:
-                chile = os.path.normcase(os.path.join(os.getcwd(), path))
+                child = os.path.normcase(os.path.join(os.getcwd(), path))
 
         if not child.startswith(parent):
             return False
