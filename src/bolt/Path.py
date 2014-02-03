@@ -499,6 +499,28 @@ class Path(object):
         """Returns self's relative path to path."""
         return GPath(os.path.relpath(self._s, getNorm(path)))
 
+    def isParent(self, path, followSymlink=False):
+        """Return true if this is a parent directory of 'path'."""
+        if followSymlink:
+            # Easier way, but...
+            parent = os.path.normcase(os.path.realpath(self._s))
+            child = os.path.normcase(os.path.realpath(getNorm(path)))
+        else:
+            # There are times when we might not want to follow symlinks
+            if os.path.isabs(self._s):
+                parent = self._cs
+            else:
+                parent = os.path.join(os.path.normcase(os.getcwd(), self._cs))
+            path = getNorm(path)
+            if os.path.isabs(path):
+                child = os.path.normcase(path)
+            else:
+                chile = os.path.normcase(os.path.join(os.getcwd(), path))
+
+        if not child.startswith(parent):
+            return False
+        return os.path.join(parent, child[len(parent):].lstrip(os.path.sep)) == child
+
     def setReadOnly(self, ro):
         """Sets status of read only flag."""
         if ro:
