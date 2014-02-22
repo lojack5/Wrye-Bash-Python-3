@@ -582,7 +582,7 @@ class Path(object):
                 except PermissionError:
                     os.chmod(self._s, stat.S_IWUSR | stat.S_IWOTH)
                     os.remove(self._s)
-            elif onlyEmpty:
+            elif emptyOnly:
                 # Directory, recursively clean out empty directories
                 roCleared = False
                 for root, dirs, files in os.walk(self._s):
@@ -617,7 +617,7 @@ class Path(object):
            no error/read-only checking."""
         os.removedirs(self._s)
 
-    def removetree(self, onlyEmpty=False):
+    def removetree(self):
         """Removes directory and subdirectoris and files recursively."""
         shutil.rmtree(self._s, onerror=_onerror)
 
