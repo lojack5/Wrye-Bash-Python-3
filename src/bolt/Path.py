@@ -568,10 +568,13 @@ class Path(object):
         if not os.path.exists(self._s):
             os.makedirs(self._s)
 
-    def remove(self):
+    def remove(self, emptyOnly=False):
         """Smart remove.  Removes a file or directory tree, clearing the
-           read-only flag if necessary.  For standard Python functions, check
-           removefile, removedir, removedirs, removetree."""
+           read-only flag if necessary.  If emptyOnly is True, then if path
+           is a directory, only removes empty subdirectories and path if no
+           files are present.  No files will be removed in this case.
+           For standard Python file/directory remove functions, see:
+              removefile, removedir, removedirs, removetree."""
         if os.path.exists(self._s):
             if os.path.isfile(self._s):
                 try:
@@ -579,7 +582,26 @@ class Path(object):
                 except PermissionError:
                     os.chmod(self._s, stat.S_IWUSR | stat.S_IWOTH)
                     os.remove(self._s)
+            elif onlyEmpty:
+                # Directory, recursively clean out empty directories
+                roCleared = False
+                for root, dirs, files in os.walk(self._s):
+                    if not files and not dirs:
+                        try:
+                            os.removedirs(root)
+                        except PermissionError:
+                            if roCleared:
+                                raise
+                            self.setReadOnly(False)
+                            roCleared = True
+                            os.removedirs(root)
+                # os.removedirs may have removed parent directories though, so
+                # restore those if needed, but keep this directory deleted
+                if not os.path.exists(self._s):
+                    os.makedirs(self._s)
+                    os.removedir(self._s)
             else:
+                # Directory, recursively remove everything
                 shutil.rmtree(self._s, onerror=_onerror)
 
     def removefile(self):
@@ -595,7 +617,7 @@ class Path(object):
            no error/read-only checking."""
         os.removedirs(self._s)
 
-    def removetree(self):
+    def removetree(self, onlyEmpty=False):
         """Removes directory and subdirectoris and files recursively."""
         shutil.rmtree(self._s, onerror=_onerror)
 
