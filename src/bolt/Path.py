@@ -395,12 +395,17 @@ class Path(object):
     @property
     def version_stripped(self):
         """File version (exe/dll), with leading and trailing zeros removed."""
-        version = list(self.version)
-        while len(version) > 1 and version[0] == 0:
-            version.pop(0)
-        while len(version) > 1 and version[-1] == 0:
-            version.pop()
-        return tuple(version)
+        version = self.version
+        start = 0
+        end = 3
+        while start < 4:
+            if version[start]: break
+            start += 1
+        else:
+            return (0,)
+        while end >= 0 and not version[end]:
+            end -= 1
+        return version[start:end+1]
 
     @property
     def crc(self):
