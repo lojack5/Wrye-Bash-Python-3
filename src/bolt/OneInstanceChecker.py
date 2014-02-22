@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bash.
 #
@@ -21,10 +19,12 @@
 #
 # =============================================================================
 
+
 """This module is a helper function for ensuring only one instance of an
    application is running at a time.  Adapted from:
      http://www.effbot.org/librarybook/msvcrt-example-3.py
    """
+
 
 # Imports ---------------------------------------------------------------------
 import time

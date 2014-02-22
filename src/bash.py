@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bash.
 #
@@ -21,7 +19,9 @@
 #
 # =============================================================================
 
+
 """This module does the real working of starting Wrye Bash."""
+
 
 # Imports ---------------------------------------------------------------------
 #--Standard
@@ -34,8 +34,11 @@ import traceback
 from . import barg
 from . import bass
 
-# Install dummy translation function
+
+# Install dummy translation function, so it can be used before translations are
+# installed
 builtins.__dict__['_'] = lambda x: x
+
 
 def ErrorMessage(message):
     """Show an error message using GUI if possible."""
@@ -70,6 +73,7 @@ def ErrorMessage(message):
 def VerifyRequirements():
     """Check to see if all required dependencies are installed."""
     if hasattr(sys, 'frozen'):
+        # Frozen app has the depenancies frozen with it
         return True
 
     errors = []
@@ -81,7 +85,7 @@ def VerifyRequirements():
         errors.append(_('wxPython is required.  None detected.  Get it from:')
                       + '\n    http://wiki.wxpython.org/ProjectPhoenix')
         haveWx = False
-    #--Python 3.2
+    #--Python 3.3
     if sys.version_info[0:2] != (3, 3):
         url = 'http://www.python.org/download/releases/3.3.3/'
         if haveWx:
@@ -130,6 +134,7 @@ def VerifyRequirements():
         ErrorMessage(msg)
         return False
     return True
+
 
 def main():
     try:

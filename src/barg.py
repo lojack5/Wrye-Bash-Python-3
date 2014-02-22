@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bash.
 #
@@ -21,14 +19,21 @@
 #
 # =============================================================================
 
+
 """This module parses the command line for options."""
 
+
 # Imports ---------------------------------------------------------------------
+#-Standard
 import argparse
+
+#-Local
 from . import bass
 
-#------------------------------------------------------------------------------
+
 def parse():
+    """Parse the command line (sys.argv) for parameters for Wrye Bash.
+       Stores recognized parameters in bass.opts"""
     parser = argparse.ArgumentParser(prog='Wrye Bash',
                                      add_help=False)
     parser.add_argument('-d', '--debug',

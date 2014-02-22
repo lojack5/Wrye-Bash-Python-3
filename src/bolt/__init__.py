@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bash.
 #
@@ -20,5 +18,6 @@
 #  Wrye Bash copyright (C) 2005-2009 Wrye
 #
 # =============================================================================
+
 
 """bolt contains utility functions and classes"""

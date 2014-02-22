@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bash.
 #
@@ -21,6 +19,7 @@
 #
 # =============================================================================
 
+
 """This module handles translation functions for Wrye Bash."""
 
 
@@ -30,12 +29,14 @@
 
 
 # Imports ---------------------------------------------------------------------
+#-Standard
 import locale
 import gettext
 import sys
 import traceback
 import subprocess
 
+#-Local
 from .Path import GPath
 
 
@@ -44,7 +45,6 @@ if locale.getlocale() == (None, None):
     locale.setlocale(locale.LC_ALL, '')
 
 
-# Functions -------------------------------------------------------------------
 def Dump(language, outPath, *files):
     """Dumps translatable string from *files to a new txt file in outPath,
        named based on language.  If an already existing translation file exists
@@ -57,11 +57,11 @@ def Dump(language, outPath, *files):
         files = []
         mopy = GPath(__file__).realpath.head.head.head
         files = [root.join(file).s for root, dirs, fnames in mopy.walk()
-                                   for file in fnames
-                                   if file.cext == '.py']
+                                   for file_ in fnames
+                                   if file_.cext == '.py']
         print('files:')
-        for file in files:
-            print(file)
+        for file_ in files:
+            print(file_)
     #--Output files
     outTxt = language + 'NEW.txt'
     fullTxt = outPath.join(outTxt)

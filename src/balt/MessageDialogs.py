@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bash.
 #
@@ -21,13 +19,19 @@
 #
 # =============================================================================
 
+
 """This modules implements common modal dialogs used for showing information,
    warnings, and errors."""
 
+
 # Imports ---------------------------------------------------------------------
+#-Libraries
 import wx
+
+#--Local
 from . import Vista
 from ..bolt.Regex import reURL, reURLCode
+
 
 def VistaDialog(parent, message, title, buttons=[], checkBox=None, icon=None,
                 commandLinks=True, footer='', expander=[], heading=''):
@@ -59,6 +63,7 @@ def VistaDialog(parent, message, title, buttons=[], checkBox=None, icon=None,
             else:
                 return id
     return (None, result[2])
+
 
 def AskStyled(parent, message, title, style, **kwdargs):
     """Shows a modal MessageDialog"""
@@ -113,9 +118,11 @@ def AskStyled(parent, message, title, style, **kwdargs):
         dialog.Destroy()
     return result in (wx.ID_OK, wx.ID_YES)
 
+
 def AskOk(parent, message, title='', **kwdargs):
     """Shows a modal Ok message."""
     return AskStyled(parent, message, title, wx.OK|wx.CANCEL, **kwdargs)
+
 
 def AskYes(parent, message, title='', default=True, icon=wx.ICON_EXCLAMATION,
            **kwdargs):
@@ -123,14 +130,17 @@ def AskYes(parent, message, title='', default=True, icon=wx.ICON_EXCLAMATION,
     style = wx.YES_NO|icon|(wx.YES_DEFAULT if default else wx.NO_DEFAULT)
     return AskStyled(parent, message, title, style, **kwdargs)
 
+
 def AskWarning(parent, message, title='Warning', **kwdargs):
     """Shows a modal warning message."""
     return AskStyled(parent, message, title,
                      wx.OK|wx.CANCEL|wx.ICON_EXCLAMATION, **kwdargs)
 
+
 def ShowOk(parent, message, title='', **kwdargs):
     """Shows a modal error message."""
     return AskStyled(parent, message, title, wx.OK, **kwdargs)
+
 
 def ShowError(parent, message, title='Error', **kwdargs):
     """Shows a modal error message."""

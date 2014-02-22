@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bash.
 #
@@ -21,8 +19,10 @@
 #
 # =============================================================================
 
+
 """This module is where all modules/packages should put variables that need
    to be accessed by other modules."""
+
 
 # Globals ---------------------------------------------------------------------
 dirs = None     # Directories

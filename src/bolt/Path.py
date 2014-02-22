@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bash.
 #
@@ -20,6 +18,7 @@
 #  Wrye Bash copyright (C) 2005-2009 Wrye
 #
 # =============================================================================
+
 
 """This module contains a class wrapper around path operations, as well as a
    few useful helper functions."""
@@ -57,7 +56,6 @@ if os.name == 'nt':
 
 
 #--Paths ----------------------------------------------------------------------
-#------------------------------------------------------------------------------
 Path = None  # Place holder, so GPath doesn't have undefined 'Path'
 
 
@@ -83,6 +81,7 @@ def GPath(name):
     else:
         return _gpaths.setdefault(norm,Path(norm))
 
+
 def GPathPurge():
     """Cleans out the _gpaths dictionary of unused Path object."""
     for key in _gpaths.keys():
@@ -99,7 +98,7 @@ def getcwd():
 
 
 def getNorm(name):
-    """Return normalized path for specified string/path object."""
+    """Return normalized path string for specified string/path object."""
     if not name:
         return name
     elif isinstance(name,Path):
@@ -108,7 +107,7 @@ def getNorm(name):
 
 
 def getCase(name):
-    """Return normalized path + normalizes case for string/path object."""
+    """Return normalized path + case string for string/path object."""
     if not name:
         return name
     if isinstance(name,Path):
@@ -117,7 +116,8 @@ def getCase(name):
 
 
 def tempdir():
-    """Returns directory where temp files are made."""
+    """Returns Path object for the location where temp files are
+       created by default for the system."""
     return GPath(tempfile.gettempdir())
 
 
@@ -135,6 +135,7 @@ def _onerror(func, path, exc_info):
         raise
 
 
+@make_constants()
 class Path(object):
     """A file path.  May be a directory or filename, a full path or relative
        path.  Can include the drive or not.  Supports Pickling."""
@@ -174,27 +175,30 @@ class Path(object):
         return 'Path('+repr(self._s)+')'
 
     def __str__(self):
-        """Same as self.s, return Path as unicode string"""
+        """Same as self.s, return Path as string"""
         return self._s
 
     def __add__(self, other):
-        """Add two path strings together.  Does not insert path separators."""
+        """Adds path string/object to self.  Does not insert path
+           separators."""
         return GPath(self._s + getNorm(other))
 
     def __radd__(self, other):
-        """Add two path strings together.  Does not insert path separators."""
+        """Adds self to another path string/object.  Does not insert path
+           seperators."""
         return GPath(getNorm(other) + self._s)
 
     def __truediv__(self, other):
-        """Join two paths together with path separator."""
+        """Join path to self, including path separator."""
         return GPath(os.path.join(self._s, getNorm(other)))
 
     def __rtruediv__(self, other):
-        """Join two paths together with path separator."""
+        """Joins self to another path string/object, including path
+           separator."""
         return GPath(os.path.join(getNorm(other), self._s))
 
     def __hash__(self):
-        """Has function for use as a key for containers."""
+        """Hash function for use as a key for containers."""
         return hash(self._cs)
 
     #--Comparison functions (__cmp__ doesn't exist in Python 3)
@@ -265,32 +269,32 @@ class Path(object):
 
     @property
     def head(self):
-        """For alpha\beta.gamma returns alpha."""
+        """For alpha\beta.gamma returns alpha as Path object."""
         return GPath(self._shead)
 
     @property
     def tail(self):
-        """For alpha\beta.gamma returns beta.gamma"""
+        """For alpha\beta.gamma returns beta.gamma as Path object."""
         return GPath(self._stail)
 
     @property
     def body(self):
-        """For alpha\beta.gamma returns beta."""
+        """For alpha\beta.gamma returns beta as Path object."""
         return GPath(self._sbody)
 
     @property
     def root(self):
-        """For alpha\beta.gamma returns alpha\beta"""
+        """For alpha\beta.gamma returns alpha\beta as Path object"""
         return GPath(self._sroot)
 
     @property
     def ext(self):
-        """Returns extension, including period"""
+        """Returns extension, including period as string."""
         return self._ext
 
     @property
     def cext(self):
-        """Returns extension, including period, as case normalized stirng"""
+        """Returns extension, including period, as case normalized string"""
         return self._cext
 
     @property
@@ -323,7 +327,7 @@ class Path(object):
             return sum(sum(map(os.path.getsize,
                                map(lambda z: os.path.join(root,
                                                           dir,
-                                                          file),
+                                                          z),
                                    files)
                                 )
                            )
@@ -361,8 +365,8 @@ class Path(object):
             #--Y2038 bug - os.path.getmtime can't handle years past
             #  the Unix epoch, reset to a random time 10 days within
             #  1/1/2037
-            mtime = time.mktime((2037,1,1,0,0,0,3,1,0))
-            mtime += random.randint(10*24*60*60) # 10 days in seconds
+            mtime = time.mktime((2037, 1, 1, 0, 0, 0, 3, 1, 0))
+            mtime += random.randint(10 * 24 * 60 * 60) # 10 days in seconds
             os.utime(self._s, (os.path.getatime(self._s), mtime))
         return mtime
 
@@ -373,7 +377,7 @@ class Path(object):
 
     @property
     def stat(self):
-        """File stats."""
+        """File stats from os.stat."""
         return os.stat(self._s)
 
     @property
@@ -386,7 +390,7 @@ class Path(object):
             return (win32api.HIWORD(ms), win32api.LOWORD(ms),
                     win32api.HIWORD(ls), win32api.LOWORD(ls))
         except:
-            return (0,0,0,0)
+            return (0, 0, 0, 0)
 
     @property
     def version_stripped(self):
@@ -413,22 +417,22 @@ class Path(object):
 
     @property
     def exists(self):
-        """File exists."""
+        """True if file/directory exists."""
         return os.path.exists(self._s)
 
     @property
     def isdir(self):
-        """Path is a directory."""
+        """True if path exists and is a directory."""
         return os.path.isdir(self._s)
 
     @property
     def isfile(self):
-        """Path is a file."""
+        """True if path exists and is a file."""
         return os.path.isfile(self._s)
 
     @property
     def isabs(self):
-        """Path is an absolute path."""
+        """True if path is an absolute path."""
         return os.path.isabs(self._s)
 
     @property
@@ -495,12 +499,12 @@ class Path(object):
         dirs.reverse()
         return dirs
 
-    def relpath(self, path):
-        """Returns self's relative path to path."""
+    def relpath(self, other):
+        """Returns self's relative path to other."""
         return GPath(os.path.relpath(self._s, getNorm(path)))
 
-    def isParent(self, path, followSymlink=False):
-        """Return true if this is a parent directory of 'path'."""
+    def isParent(self, other, followSymlink=False):
+        """Return true if this is a parent directory of 'other'."""
         if followSymlink:
             # Easier way, but...
             parent = os.path.normcase(os.path.realpath(self._s))
@@ -519,7 +523,8 @@ class Path(object):
 
         if not child.startswith(parent):
             return False
-        return os.path.join(parent, child[len(parent):].lstrip(os.path.sep)) == child
+        return (os.path.join(parent, child[len(parent):].lstrip(os.path.sep))
+                == child)
 
     def setReadOnly(self, ro):
         """Sets status of read only flag."""
@@ -560,7 +565,7 @@ class Path(object):
 
     def remove(self):
         """Smart remove.  Removes a file or directory tree, clearing the
-           read-only flag if necessary.  For standard Python versions, check
+           read-only flag if necessary.  For standard Python functions, check
            removefile, removedir, removedirs, removetree."""
         if os.path.exists(self._s):
             if os.path.isfile(self._s):
@@ -642,7 +647,7 @@ class Path(object):
         return temp(self, dest)
 
     def touch(self):
-        """Link unix 'touch'.  Creates file with current date/time."""
+        """Link unix 'touch'.  Creates/updates file with current date/time."""
         if os.path.exists(self._s):
             os.utime(self._s, (os.path.getatime(self._s), time.time()))
         else:
@@ -652,6 +657,7 @@ class Path(object):
     def setcwd(self):
         """Set current working directory to self."""
         os.chdir(self._s)
+
 
 @make_constants()
 class PathUnion(object):
@@ -734,6 +740,7 @@ else:
     def _shell_path(name):
         return GPath('.')
 
+
 Desktop = _shell_path('DESKTOP')
 AppData = _shell_path('APPDATA')
 LocalAppData = _shell_path('LOCAL_APPDATA')
@@ -744,5 +751,6 @@ Startup = _shell_path('STARTUP')
 Personal = _shell_path('PERSONAL')
 Recent = _shell_path('RECENT')
 SendTo = _shell_path('SENDTO')
+
 
 bind_all(globals(), stoplist=['_gpaths'])

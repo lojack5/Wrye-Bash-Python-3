@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bash.
 #
@@ -21,13 +19,14 @@
 #
 # =============================================================================
 
+
 """This module contains UI elements specific to Windows Vista and later.
 
    The TaskDialog code is from taskdialog.py, license below:
 
        taskdialog.py
 
-       Copyright Â© 2009 Te-jÃ© Rodgers <contact@tejerodgers.com>
+       Copyright © 2009 Te-jé Rodgers <contact@tejerodgers.com>
 
        This file is part of Curtains
 
@@ -46,6 +45,7 @@
        Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
        MA 02110-1301, USA.
    """
+
 
 # Imports ---------------------------------------------------------------------
 from ctypes import *
@@ -70,8 +70,6 @@ except ImportError:
         pass
 
 
-#==StartURL ===================================================================
-#==============================================================================
 def StartURL(url):
     """Opens URL in default browser.  Do it this way instead of os.startfile or
        ShellExecute, because anchors get lost using those."""

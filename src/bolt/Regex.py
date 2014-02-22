@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bash.
 #
@@ -20,6 +18,7 @@
 #  Wrye Bash copyright (C) 2005-2009 Wrye
 #
 # =============================================================================
+
 
 """This module holds useful regex's that can be used."""
 

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3.3
-# -*- coding: utf-8 -*-
 #
 # GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bash.
@@ -22,12 +21,15 @@
 #
 # =============================================================================
 
+
 """This module starts Wrye Bash in GUI mode."""
+
 
 # Import Hooks ----------------------------------------------------------------
 import sys
 if not hasattr(sys,'frozen'):
-    import imp,os
+    import imp
+    import os
     # When a Python application/module is located in a directory with unicode
     # characters, this causes problems with imports.  The full path is encoded
     # to MBCS before passing to the filesystem, so any characters that do not
@@ -84,6 +86,7 @@ if not hasattr(sys,'frozen'):
                 return mod
 
     sys.meta_path.append(UnicodeImporter())
+
 
 # Start Wrye Bash -------------------------------------------------------------
 if __name__ == '__main__':

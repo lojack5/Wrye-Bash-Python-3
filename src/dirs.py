@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # GPL License and Copyright Notice ============================================
 #  This file is part of Wrye Bash.
 #
@@ -21,7 +19,9 @@
 #
 # =============================================================================
 
+
 """Initialize all the directories Wrye Bash will possibly need."""
+
 
 # Imports ---------------------------------------------------------------------
 #--Standard
@@ -43,7 +43,7 @@ def _OnExit():
 
 def InitDirs():
     # Initialize directories.  To make sure Bash follows symlinks and stuff
-    # correctly, we'll use the 'realpath' portion of this.'
+    # correctly, we'll use the 'realpath' portion of this.
     bass.dirs = {}
     dirs = bass.dirs
 
