@@ -36,13 +36,8 @@ import subprocess
 import codecs
 import tempfile
 import binascii
-
-#--Libraries
-try:
-    import win32api
-    from win32com.shell import shell, shellcon
-except ImportError:
-    win32api = None
+import ctypes
+import ctypes.wintypes
 
 #--Local
 from src.bolt.Optimize import make_constants, bind_all
@@ -759,13 +754,37 @@ class PathUnion(object):
 
 
 # Initialize Shell Paths ------------------------------------------------------
-if win32api:
-    def _shell_path(name):
-        folderId = getattr(shellcon, 'CSIDL_'+name)
-        return GPath(shell.SHGetFolderPath(0, folderId, None, 0))
-else:
-    def _shell_path(name):
-        return GPath('.')
+# No need to use win32api - we can roll our own here, and this was the only
+# reason pywin32 was required in the first place.
+import ctypes
+
+
+_csidls = {
+    # Only reproduce a few of the shell folders here, even most of these won't
+    # be used.
+    'DESKTOP': 0,
+    'PROGRAMS': 2,
+    'PERSONAL': 5,
+    'FAVORITES': 6,
+    'STARTUP': 7,
+    'RECENT': 8,
+    'SENDTO': 9,
+    'STARTMENU': 11,
+    'APPDATA': 26,
+    'LOCAL_APPDATA': 28,
+    }
+
+
+def _shell_path(name):
+    SHGetFolderPath = ctypes.windll.shell32.SHGetFolderPathW
+    SHGetFolderPath.argtypes = [ctypes.wintypes.HWND,
+                                ctypes.c_int,
+                                ctypes.wintypes.HANDLE,
+                                ctypes.wintypes.DWORD,
+                                ctypes.wintypes.LPCWSTR]
+    path_buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
+    error = SHGetFolderPath(0, _csidls.get(name), 0, 0, path_buf)
+    return GPath(path_buf.value)
 
 
 Desktop = _shell_path('DESKTOP')
@@ -778,6 +797,11 @@ Startup = _shell_path('STARTUP')
 Personal = _shell_path('PERSONAL')
 Recent = _shell_path('RECENT')
 SendTo = _shell_path('SENDTO')
+
+
+# Clean up a little
+del _shell_path
+del _csidls
 
 
 bind_all(globals(), stoplist=['_gpaths'])

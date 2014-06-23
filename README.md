@@ -11,10 +11,6 @@ Requirements:
 
    Get the latest applicable (32-bit/64-bit) build for Python 3.4, these are denoted by a `cp34` in the file name.  These are [Python Wheel](http://pythonwheels.com/ "Python Wheels") files, which are the new standard to replace Python Eggs.  You can install them with the [wheel](https://pypi.python.org/pypi/wheel "wheel") package, or if you have no other reason to install `wheel` first, just extract it.  `.whl` files are just zip files with more data inside, so rename it to a `.zip`, and extract the `wx` folder to the Python `site-packages` directory.
 
-3. [pywin32](https://sourceforge.net/projects/pywin32/files/pywin32/ "pywin32 download page")
-
-   Get the latest applicable build for Python 3.4.  At least version 218 is required.
-
 Also recommended:
 
 * [Python Launcher for Windows](http://blog.python.org/2011/07/python-launcher-for-windows_11.html "Python Launcher for Windows")

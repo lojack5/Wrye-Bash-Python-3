@@ -26,7 +26,7 @@
 
        taskdialog.py
 
-       Copyright © 2009 Te-jé Rodgers <contact@tejerodgers.com>
+       Copyright Â© 2009 Te-jÃ© Rodgers <contact@tejerodgers.com>
 
        This file is part of Curtains
 
@@ -49,6 +49,7 @@
 
 # Imports ---------------------------------------------------------------------
 from ctypes import *
+import ctypes.wintypes as wintypes
 import winreg
 import subprocess
 import platform
@@ -57,17 +58,15 @@ import os
 
 #==SetUAC =====================================================================
 #==============================================================================
-try:
-    import win32gui
+_SendMessage = windll.user32.SendMessageW
+_SendMessage.argtypes = [wintypes.HWND,
+                         c_uint,
+                         wintypes.WPARAM,
+                         wintypes.LPARAM]
 
-    def SetUAC(handle, uac=True):
-        """Sets a button to a UAC button (shield icon)"""
-        win32gui.SendMessage(handle, 0x160C, None, uac)
-
-except ImportError:
-    def SetUAC(handle, uac=True):
-        """Sets a button to a UAC button (shield icon)"""
-        pass
+def SetUAC(handle, uac=True):
+    """Sets a button to a UAC button (shield icon)"""
+    _SendMessage(handle, 0x160C, None, uac)
 
 
 def StartURL(url):
