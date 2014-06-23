@@ -21,9 +21,6 @@ Also recommended:
 
   Python 3.3+ installs this by default, so no need to download it again.  However, it's worth reading the linked article if you don't know how to put a shebang line into your source files.  Both the Python 2 and Python 3 versions of Wrye Bash have shebang lines, so nothing extra should be needed.
 
-* [cx_Freeze](http://cx-freeze.sourceforge.net/ "cx_Freeze Sourceforge page") will also be needed to build the Standalone version.  ~~It can be easily installed with `pip.exe`:~~
+* [py2exe](http://www.py2exe.org/ "py2exe main site") will also be needed to build the Standalone version.  It can be easily installed with `pip.exe`:
 
-   ~~`>pip install cx_Freeze`~~
-   
-   **NOTE:** The current build of cx_Freeze that is installed via `pip` was setup with Python 3.4.0.  For whatever reason, the resulting executables created by cx_Freeze will not execute as a result.  You can get a version that was rebuilt with Python 3.4.1 [here](http://www.lfd.uci.edu/~gohlke/pythonlibs/#cx_freeze).  This will supposedly be fixed with a newer version...eventually.
-
+   `>pip install py2exe`
