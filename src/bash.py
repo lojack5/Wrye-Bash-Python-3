@@ -80,28 +80,32 @@ def VerifyRequirements():
     #--wxPython
     try:
         import wx
-        haveWx = True
     except ImportError:
-        errors.append(_('wxPython is required.  None detected.  Get it from:')
-                      + '\n    http://wiki.wxpython.org/ProjectPhoenix')
-        haveWx = False
+        url = 'http://wiki.wxpython.org/ProjectPhoenix'
+        errors.append(
+            _('wxPython Phoenix is required.  Get it from:')
+            + '\n    <a href="%(url)s">%(url)s</a>' % {'url':url})
     #--Python 3.4
     if sys.version_info[0:2] != (3, 4):
         url = 'https://www.python.org/download/releases/3.4.1/'
-        if haveWx:
-            url = '[[Python 3.4|' + url + ']]'
         errors.append(
-            (_('Python 3.4 is required.  Current version is %(version)s.'
+            (_('Python 3.4 is required.  Installed version is %(version)s.'
                '  Get it from:')
              % {'version':'.'.join(map(str, sys.version_info[0:3]))})
-            + '\n    %s' % url)
+            + '\n    <a href="%(url)s">%(url)s</a>' % {'url':url})
 
     if errors:
-        msg = (_('Cannot start Wrye Bash!  Please ensure that Python'
-                 ' dependencies are installed correctly.')
-               + '\n\n'
-               + '\n\n'.join(errors))
-        ErrorMessage(msg)
+        from .balt import VistaDialog
+        msg = _('Please ensure the Python dependencies are installed correctly.')
+        msg += '\n\n'
+        msg += '\n\n'.join(errors)
+        VistaDialog(
+            None,
+            msg,
+            _('Wrye Bash'),
+            buttons=[(wx.ID_OK, 'Ok')],
+            icon='error',
+            heading='Cannot start Wrye Bash!')
         return False
     return True
 
