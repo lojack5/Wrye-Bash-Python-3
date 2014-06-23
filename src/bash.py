@@ -29,6 +29,7 @@ import os
 import sys
 import builtins
 import traceback
+import warnings
 
 #--Local
 from . import barg
@@ -113,19 +114,13 @@ def VerifyRequirements():
 def main():
     # A bug with the current release of wxPhoenix causes wx to try to print to
     # print to warnings.warn, which tries to file.write to stderr, but stderr
-    # is None here usually, when launched as a .py file.  This throws an error
-    # so we need to initialize stderr to something.
+    # is None here usually, when launched as a .py file.
+    # So instead, we'll tell the warning module to ignore this warning
     # As for the bug: the current build snapshot has wxWidgets at 3.0.2, but
     # but wxPython at 3.0.1, and so it tries to print a warning.
-    if sys.stderr is None:
-        if sys.stdout is not None:
-            sys.stderr = sys.stdout
-        elif sys.__stderr__ is not None:
-            sys.stderr = sys.__stderr__
-        elif sys.__stdout__ is not None:
-            sys.stderr = sys.__stderr__
-        else:
-            sys.stderr = open(os.devnull, 'w')
+    warnings.filterwarnings(
+        'ignore',
+        'wxPython/wxWidgets release number mismatch')
     try:
         #--Parse command line
         barg.parse()
@@ -161,7 +156,10 @@ def main():
         #  For now we're just using a dummy frame until we flesh this out
         frame = wx.Frame(None, wx.ID_ANY, _('Haha!'))
         frame.Show()
-        frame.SetIcon(wx.Icon('bash.ico'))
+        if hasattr(sys, 'frozen'):
+            frame.SetIcon(wx.Icon(sys.executable, wx.BITMAP_TYPE_ICO))
+        else:
+            frame.SetIcon(wx.Icon('bash.ico'))
         app.MainLoop()
     except Exception as e:
         #--Something bad happened, try to show it in GUI mode.
