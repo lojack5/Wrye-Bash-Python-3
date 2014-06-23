@@ -41,19 +41,19 @@ FOR /F "skip=%SKIPVAL% usebackq tokens=%TOKENS%*" %%i in (`%REGCMD%`) do IF x"%%
 
 
 :: get python path from registry
-SET REGCMD=reg query HKLM\SOFTWARE\Python\PythonCore\3.3\InstallPath /ve
+SET REGCMD=reg query HKLM\SOFTWARE\Python\PythonCore\3.4\InstallPath /ve
 %REGCMD% >NUL 2>&1 && FOR /F "skip=%SKIPVAL% usebackq tokens=%TOKENS%*" %%i in (`%REGCMD%`) do SET PYPATH=%%j
 IF NOT x"%PYPATH%"==x"" GOTO FOUND
 
-SET REGCMD=reg query HKCU\SOFTWARE\Python\PythonCore\3.3\InstallPath /ve
+SET REGCMD=reg query HKCU\SOFTWARE\Python\PythonCore\3.4\InstallPath /ve
 %REGCMD% >NUL 2>&1 && FOR /F "skip=%SKIPVAL% usebackq tokens=%TOKENS%*" %%i in (`%REGCMD%`) do SET PYPATH=%%j
 IF NOT x"%PYPATH%"==x"" GOTO FOUND
 
-SET REGCMD=reg query HKLM\SOFTWARE\Wow6432Node\Python\PythonCore\3.3\InstallPath /ve
+SET REGCMD=reg query HKLM\SOFTWARE\Wow6432Node\Python\PythonCore\3.4\InstallPath /ve
 %REGCMD% >NUL 2>&1 && FOR /F "skip=%SKIPVAL% usebackq tokens=%TOKENS%*" %%i in (`%REGCMD%`) do SET PYPATH=%%j
 IF NOT x"%PYPATH%"==x"" GOTO FOUND
 
-SET REGCMD=reg query HKCU\SOFTWARE\Wow6432Node\Python\PythonCore\3.3\InstallPath /ve
+SET REGCMD=reg query HKCU\SOFTWARE\Wow6432Node\Python\PythonCore\3.4\InstallPath /ve
 %REGCMD% >NUL 2>&1 && FOR /F "skip=%SKIPVAL% usebackq tokens=%TOKENS%*" %%i in (`%REGCMD%`) do SET PYPATH=%%j
 IF NOT x"%PYPATH%"==x"" GOTO FOUND
 

@@ -85,24 +85,24 @@ def VerifyRequirements():
         errors.append(_('wxPython is required.  None detected.  Get it from:')
                       + '\n    http://wiki.wxpython.org/ProjectPhoenix')
         haveWx = False
-    #--Python 3.3
-    if sys.version_info[0:2] != (3, 3):
-        url = 'http://www.python.org/download/releases/3.3.3/'
+    #--Python 3.4
+    if sys.version_info[0:2] != (3, 4):
+        url = 'https://www.python.org/download/releases/3.4.1/'
         if haveWx:
-            url = '[[Python 3.3|' + url + ']]'
+            url = '[[Python 3.4|' + url + ']]'
         errors.append(
-            (_('Python 3.3 is required.  Current version is %(version)s.'
+            (_('Python 3.4 is required.  Current version is %(version)s.'
                '  Get it from:')
              % {'version':'.'.join(map(str, sys.version_info[0:3]))})
             + '\n    %s' % url)
     #--pywin32
     url = 'https://sourceforge.net/projects/pywin32/files/pywin32/'
     if haveWx:
-        url = '[[pywin32 218|' + url + ']]'
+        url = '[[pywin32 219|' + url + ']]'
     try:
         import win32api
     except ImportError:
-        errors.append(_('pywin32 218 is required.  None detected.'
+        errors.append(_('pywin32 218 or later is required.  None detected.'
                         '  Get it from:')
                       + '\n    ' + url)
     else:
@@ -121,7 +121,7 @@ def VerifyRequirements():
             version = 'unknown'
         if version < 218:
             errors.append(
-                (_('pywin32 218 is required.  Current version is %(version)s.'
+                (_('pywin32 218 or later is required.  Current version is %(version)s.'
                    '  Get it from:')
                  % {'version': version})
                 + '\n    ' + url)
@@ -137,6 +137,21 @@ def VerifyRequirements():
 
 
 def main():
+    # A bug with the current release of wxPhoenix causes wx to try to print to
+    # print to warnings.warn, which tries to file.write to stderr, but stderr
+    # is None here usually, when launched as a .py file.  This throws an error
+    # so we need to initialize stderr to something.
+    # As for the bug: the current build snapshot has wxWidgets at 3.0.2, but
+    # but wxPython at 3.0.1, and so it tries to print a warning.
+    if sys.stderr is None:
+        if sys.stdout is not None:
+            sys.stderr = sys.stdout
+        elif sys.__stderr__ is not None:
+            sys.stderr = sys.__stderr__
+        elif sys.__stdout__ is not None:
+            sys.stderr = sys.__stderr__
+        else:
+            sys.stderr = open(os.devnull, 'w')
     try:
         #--Parse command line
         barg.parse()
