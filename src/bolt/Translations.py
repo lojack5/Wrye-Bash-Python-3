@@ -68,13 +68,13 @@ def Dump(language, outPath, *files):
     tmpTxt = outPath.join(language + 'NEW.tmp')
     oldTxt = outPath.join(language + '.txt')
     #--First dump a fresh translation file
-    args = ['p', '-a', '-o', fullTxt.s]
+    args = ['p', '-o', fullTxt.s, '-a']
     args.extend(files)
     if hasattr(sys, 'frozen'):
         # Frozen app, the tool scripts aren't accessible
         # Instead, they're included in the package as an
         # importable module
-        import pygettext
+        from . import pygettext
         old_argv = sys.argv[:]
         sys.argv = args
         pygettext.main()
@@ -106,24 +106,25 @@ def Install(language=None, pathRead=None, pathWrite=None):
     else:
         try:
             # See if translation needs to be recompiled
-            txtMtime = txt.mtime
-            if not mo.exists or txtMtime != mo.mtime:
-                txt.copy(po)
-                args= ['m', po.s, '-o', mo.s]
-                if hasattr(sys, 'frozen'):
-                    # Same thing as for 'Dump' for frozen
-                    # apps.
-                    import msgfmt
-                    old_argv = sys.argv[:]
-                    sys.argv = args
-                    msgfmt.main()
-                    sys.argv = old_argv
-                else:
-                    m = GPath(sys.prefix).join('Tools', 'i18n', 'msgfmt.py')
-                    args[0] = m.s
-                    subprocess.call(args, shell=True)
-                po.remove()
-                mo.mtime = txtMtime
+            if txt.exists:
+                txtMtime = txt.mtime
+                if not mo.exists or txtMtime != mo.mtime:
+                    txt.copy(po)
+                    args= ['m', '-o', mo.s, po.s]
+                    if hasattr(sys, 'frozen'):
+                        # Same thing as for 'Dump' for frozen
+                        # apps.
+                        from . import msgfmt
+                        old_argv = sys.argv[:]
+                        sys.argv = args
+                        msgfmt.main()
+                        sys.argv = old_argv
+                    else:
+                        m = GPath(sys.prefix).join('Tools', 'i18n', 'msgfmt.py')
+                        args[0] = m.s
+                        subprocess.call(args, shell=True)
+                    po.remove()
+                    mo.mtime = txtMtime
             # Create GNU translations
             with mo.open('rb') as ins:
                 trans = gettext.GNUTranslations(ins)

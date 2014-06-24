@@ -27,3 +27,4 @@
 # Globals ---------------------------------------------------------------------
 dirs = None     # Directories
 opts = None     # Command line arguments
+version = '3.0'
