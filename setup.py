@@ -80,10 +80,6 @@ pygettext = os.path.join(sys.prefix, 'Tools', 'i18n', 'pygettext.py')
 msgfmtTo = os.path.join('src', 'bolt', 'msgfmt.py')
 pygettextTo = os.path.join('src', 'bolt', 'pygettext.py')
 
-print('Copying translation scripts.')
-shutil.copy(msgfmt, msgfmtTo)
-shutil.copy(pygettext, pygettextTo)
-
 
 # Additional external files needed by Bash
 if '64bit' in platform.architecture():
@@ -99,49 +95,58 @@ extras = [
     ]
 
 
-# Build
-setup(
-    windows = [Target()],
-    options = {
-        'py2exe': {
-            'dll_excludes': [
-                ],
-            'includes': [
-                ],
-            'excludes': [
-                # Things to NOT exclude:
-                # 'socket',  # Needed by msgfmt
-                # '_socket', # Needed by msgfmt
+def main():
+    print('Copying translation scripts.')
+    shutil.copy(msgfmt, msgfmtTo)
+    shutil.copy(pygettext, pygettextTo)
+    # Build
+    setup(
+        windows = [Target()],
+        options = {
+            'py2exe': {
+                'dll_excludes': [
+                    ],
+                'includes': [
+                    ],
+                'excludes': [
+                    # Things to NOT exclude:
+                    # 'socket',  # Needed by msgfmt
+                    # '_socket', # Needed by msgfmt
 
-                # The following are suggested in the py2exe tutorial
-                # they are generally imports that are never actually used
-                '_ssl',
-                'ssl',
-                'pdb',
-                'unittest',
-                'distutils',
-                'doctest',
-                'difflib',
-                # tkinter not needed since wx will be guaranteed to be included
-                'tkinter',
-                # fintl is referenced by pygettest as a self test, not needed
-                'fintl',
-                # Carbon is used by wx.lib.colourutils - which is not used
-                'Carbon',
-                # Others that just simply aren't used
-                'optparse',
-                ],
-            'ignores': [],
-            'bundle_files': 0,  # 0 = everything
-            'optimize': 2,      # 2 = full optimization
-            'compressed': True,
+                    # The following are suggested in the py2exe tutorial
+                    # they are generally imports that are never actually used
+                    '_ssl',
+                    'ssl',
+                    'pdb',
+                    'unittest',
+                    'distutils',
+                    'doctest',
+                    'difflib',
+                    # tkinter not needed since wx will be guaranteed to be included
+                    'tkinter',
+                    # fintl is referenced by pygettest as a self test, not needed
+                    'fintl',
+                    # Carbon is used by wx.lib.colourutils - which is not used
+                    'Carbon',
+                    # Others that just simply aren't used
+                    'optparse',
+                    ],
+                'ignores': [],
+                'bundle_files': 0,  # 0 = everything
+                'optimize': 2,      # 2 = full optimization
+                'compressed': True,
+                },
             },
-        },
-    data_files = extras,
-    zipfile = 'bin/library.dat', # Put bundled files in an along side file
-    )
+        data_files = extras,
+        zipfile = 'bin/library.dat', # Put bundled files in an along side file
+        )
 
 
-print('Cleaning up translation scripts.')
-remove(msgfmtTo)
-remove(pygettextTo)
+    print('Cleaning up translation scripts.')
+    remove(msgfmtTo)
+    remove(pygettextTo)
+
+if __name__=='__main__':
+    if sys.argv[-1].lower() != 'py2exe':
+        sys.argv.append('py2exe')
+    main()
