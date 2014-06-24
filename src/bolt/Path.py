@@ -379,12 +379,15 @@ class Path(object):
     def version(self):
         """File version (exe/dll)."""
         try:
-            info = win32api.GetFileVersionInfo(self._s, '\\')
+            info = GetFileVersionInfo(self._s)
             ms = info['FileVersionMS']
             ls = info['FileVersionLS']
-            return (win32api.HIWORD(ms), win32api.LOWORD(ms),
-                    win32api.HIWORD(ls), win32api.LOWORD(ls))
+            return (_HIWORD(ms), _LOWORD(ms),
+                    _HIWORD(ls), _LOWORD(ls))
         except:
+            print('error:')
+            import traceback
+            traceback.print_exc()
             return (0, 0, 0, 0)
 
     @property
@@ -753,12 +756,53 @@ class PathUnion(object):
         return self.dirs[0].join(*norms)
 
 
-# Initialize Shell Paths ------------------------------------------------------
-# No need to use win32api - we can roll our own here, and this was the only
-# reason pywin32 was required in the first place.
-import ctypes
+# Win32API --------------------------------------------------------------------
+# Various win32api stuff that Path needs: GetFileVersionInfo,
+# and SHGetFolderPath
+def _HIWORD(dw):
+    return (dw & 0xFFFF0000) >> 16
 
 
+def _LOWORD(dw):
+    return dw & 0x0000FFFF
+
+
+def GetFileVersionInfo(fileName):
+    # Optimize doesn't like when the next 3 declarations are in the global
+    # global scope, ends up in an infinite recursive optimization loop
+    from ctypes.wintypes import DWORD
+    class FFI(ctypes.Structure):
+        # VS_FIXEDFILEINFO
+        _fields_ = [
+            ('Signature', DWORD),
+            ('StrucVersion', DWORD),
+            ('FileVersionMS', DWORD),
+            ('FileVersionLS', DWORD),
+            ('ProductVersionMS', DWORD),
+            ('ProductVersionLS', DWORD),
+            ('FileFlagMask', DWORD),
+            ('FileFlags', DWORD),
+            ('FileOS', DWORD),
+            ('FileType', DWORD),
+            ('FileSubtype', DWORD),
+            ('FileDateMS', DWORD),
+            ('FileDateLS', DWORD),
+            ]
+    P_FFI = ctypes.POINTER(FFI)
+    size = ctypes.windll.version.GetFileVersionInfoSizeW(fileName, None)
+    if not size:
+        return None
+    res = ctypes.create_string_buffer(size)
+    ctypes.windll.version.GetFileVersionInfoW(fileName, None, size, res)
+    r = P_FFI()
+    l = ctypes.c_uint()
+    ctypes.windll.version.VerQueryValueW(res, '\\', ctypes.byref(r), ctypes.byref(l))
+    if not l.value:
+        return None
+    r = r.contents
+    return {x[0]:getattr(r,x[0]) for x in FFI._fields_}
+
+    
 _csidls = {
     # Only reproduce a few of the shell folders here, even most of these won't
     # be used.
