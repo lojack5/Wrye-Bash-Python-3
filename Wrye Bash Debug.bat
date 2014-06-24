@@ -86,4 +86,5 @@ ECHO Launching Wrye Bash in debug mode. >>"%OUTFILE%"
 :END
 
 PAUSE
+START NOTEPAD "%OUTFILE%"
 ENDLOCAL && EXIT /B
