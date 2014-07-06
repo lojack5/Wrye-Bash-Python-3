@@ -57,10 +57,11 @@ class Target:
     '''File info for an exe'''
     def __init__(self):
         self.name = 'Wrye Bash'
+        self.product_name = self.name
         self.description = 'The Elder Scrolls modding Swiss Army Knife.'
         self.version = src.bass.version
         self.author = 'Wrye Bash Team'
-        self.copywrite = '2014'
+        self.copyright = '2014'
         self.url = 'https://github.com/lojack5/Wrye-Bash-Python-3'
         self.download_url = self.url
         self.script = 'Wrye Bash.pyw'
